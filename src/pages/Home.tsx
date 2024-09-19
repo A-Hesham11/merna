@@ -43,6 +43,7 @@ const Home = () => {
             </ReactFullpage.Wrapper>
           );
         }}
+        credits={{ enabled: false }}
       />
     </div>
   );
