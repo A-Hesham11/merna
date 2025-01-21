@@ -13,7 +13,6 @@ import DashTitle from "../Global/DashTitle";
 
 const DigitalProducts = () => {
   const [activeItem, setActiveItem] = useState(0);
-  console.log("🚀 ~ DigitalProducts ~ activeItem:", activeItem);
   const [currentIndex, setCurrentIndex] = useState(0);
   const swiperRef = useRef(null);
 
@@ -42,7 +41,6 @@ const DigitalProducts = () => {
     { id: 0, name: "All" },
     ...categories,
   ];
-  console.log("🚀 ~ DigitalProducts ~ modifiedCategories:", modifiedCategories);
 
   const fetchDigitalProductsData = async () => {
     try {
@@ -56,12 +54,10 @@ const DigitalProducts = () => {
     }
   };
 
-  const { data, isFetching, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["DigitalProducts"],
     queryFn: fetchDigitalProductsData,
   });
-
-  console.log("🚀 ~ DigitalProducts ~ data:", data);
 
   const fetchDigitalProductData = async () => {
     try {
@@ -80,10 +76,6 @@ const DigitalProducts = () => {
     queryFn: fetchDigitalProductData,
     enabled: !!activeItem,
   });
-
-  console.log("🚀 ~ DigitalProducts ~ data:", data);
-
-  console.log("🚀 ~ DigitalProducts ~ product:", product);
 
   const handleNextSlide = () => {
     if (swiperRef.current) {

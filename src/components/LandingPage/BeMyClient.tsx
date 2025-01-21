@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FaBehance,
   FaFacebookF,
@@ -11,13 +11,35 @@ import { FaXTwitter } from "react-icons/fa6";
 import { SlSocialDribbble } from "react-icons/sl";
 import { apiRequest } from "../../utils/axios";
 import DashTitle from "../Global/DashTitle";
+import { Link } from "react-router-dom";
+
+const postClientData = async (data: Record<string, any>) => {
+  const url = "/api/postEmail";
+  return await apiRequest({
+    url,
+    method: "POST",
+    data,
+  });
+};
 
 const BeMyClient = () => {
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const dropdownRef = useRef(null);
   const [formData, setFormData] = useState({
     name: "",
+    mobile: "",
     email: "",
     serviceType: "",
   });
+
+  const handleInputClick = () => {
+    setIsDropdownVisible(true);
+  };
+
+  const handleOptionClick = (value) => {
+    setFormData({ ...formData, serviceType: value });
+    setIsDropdownVisible(false);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,11 +47,6 @@ const BeMyClient = () => {
       ...formData,
       [name]: value,
     });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Data Submitted", formData);
   };
 
   const fetchFooterData = async () => {
@@ -44,7 +61,7 @@ const BeMyClient = () => {
     }
   };
 
-  const { data, isFetching, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["footer"],
     queryFn: fetchFooterData,
   });
@@ -53,6 +70,39 @@ const BeMyClient = () => {
     acc[item.key] = item.value;
     return acc;
   }, {});
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["client_data"],
+    mutationFn: (data: any) => postClientData(data),
+    onSuccess: (data) => {
+      console.log("Data posted successfully:", data);
+    },
+  });
+
+  const handlePost = async (e) => {
+    e.preventDefault();
+    const payload = {
+      name: formData?.name,
+      mobile: formData?.mobile,
+      email: formData?.email,
+      serviceType: formData?.serviceType,
+    };
+
+    mutate(payload);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsDropdownVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
     <section className="bg-mainLight dark:bg-mainDark h-auto sm:h-svh sm:pt-[72px]">
       <div className="grid grid-cols-1 sm:grid-cols-2 pt-[72px] gap-y-8 mb-16 sm:mb-16 md:mb-0  sm:h-auto  sm:pt-0 items-end sm:items-start px-4 sm:px-6 md:px-10 lg:px-20 mt-3">
@@ -109,7 +159,7 @@ const BeMyClient = () => {
         </div>
         <div className="relative z-10 block w-full lg:w-[90%]  ml-auto fadeRight">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handlePost}
             className="bg-[#FFFCF7] dark:bg-[#272526] px-4 md:px-8 py-5 rounded-2xl w-full "
           >
             <h2 className="text-2xl font-bold text-center mb-2 dark:text-mainLight">
@@ -120,9 +170,9 @@ const BeMyClient = () => {
             </p>
 
             {/* Name Field */}
-            <div className="mb-4">
+            <div className="mb-2">
               <label
-                className="block dark:text-mainLight text-sm font-bold mb-2"
+                className="block dark:text-mainLight text-sm font-bold"
                 htmlFor="name"
               >
                 {t("What’s your name?")}
@@ -135,15 +185,39 @@ const BeMyClient = () => {
                   placeholder={t("Full Name here")}
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full my-4 py-1.5 border-b bg-transparent border-gray-300 focus:outline-none focus:border-mainColor dark:focus:border-[#E4797B] transition-all"
+                  autoComplete="off"
+                  required
+                  className="w-full my-4 py-1.5 border-b bg-transparent text-mainDark dark:text-mainLight border-gray-300 focus:outline-none focus:border-mainColor dark:focus:border-[#E4797B] transition-all"
                 />
               </div>
             </div>
 
             {/* Email Field */}
-            <div className="mb-4">
+            <div className="mb-2">
               <label
-                className="block dark:text-mainLight text-sm font-bold mb-2"
+                className="block dark:text-mainLight text-sm font-bold"
+                htmlFor="email"
+              >
+                {t("Enter Your Mobile Number?")}
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  id="mobile"
+                  name="mobile"
+                  placeholder={t("Mobile here")}
+                  value={formData.mobile}
+                  onChange={handleChange}
+                  required
+                  autoComplete="off"
+                  className="w-full py-2 my-3 border-b bg-transparent text-mainDark dark:text-mainLight border-gray-300 focus:outline-none focus:border-mainColor dark:focus:border-[#E4797B] transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="mb-2">
+              <label
+                className="block dark:text-mainLight text-sm font-bold"
                 htmlFor="email"
               >
                 {t("Enter Your Email address?")}
@@ -153,41 +227,68 @@ const BeMyClient = () => {
                   type="email"
                   id="email"
                   name="email"
+                  required
                   placeholder={t("Email here")}
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full py-2 my-3 border-b bg-transparent border-gray-300 focus:outline-none focus:border-mainColor dark:focus:border-[#E4797B] transition-all"
+                  autoComplete="off"
+                  className="w-full py-2 my-3 border-b bg-transparent text-mainDark dark:text-mainLight border-gray-300 focus:outline-none focus:border-mainColor dark:focus:border-[#E4797B] transition-all"
                 />
               </div>
             </div>
 
             {/* Service Type Field */}
-            <div className="mb-4">
+            <div className="mb-2 relative" ref={dropdownRef}>
               <label
-                className="block dark:text-mainLight text-sm font-bold mb-2"
+                className="block dark:text-mainLight text-sm font-bold"
                 htmlFor="serviceType"
               >
                 {t("Service Type")}
               </label>
-              <select
-                id="serviceType"
-                name="serviceType"
-                value={formData.serviceType}
-                onChange={handleChange}
-                className="w-full my-4 py-1.5 dark:text-mainLight dark:bg-[#272526] border-b bg-transparent border-gray-300 focus:outline-none focus:border-mainColor dark:focus:border-[#E4797B] transition-all"
-              >
-                <option value="">Select service type</option>
-                <option value="webDevelopment">Web Development</option>
-                <option value="seo">SEO Services</option>
-                <option value="design">Graphic Design</option>
-              </select>
+              <div className="relative">
+                <input
+                  type="text"
+                  id="serviceType"
+                  name="serviceType"
+                  required
+                  placeholder={t("Select service type")}
+                  value={formData.serviceType}
+                  onChange={handleChange}
+                  onClick={handleInputClick}
+                  autoComplete="off"
+                  className="w-full mt-4 py-1.5 border-b bg-transparent text-mainDark dark:text-mainLight border-gray-300 focus:outline-none focus:border-mainColor dark:focus:border-[#E4797B] transition-all"
+                />
+              </div>
+              {isDropdownVisible && (
+                <ul className="bg-mainDark dark:bg-mainLight text-mainLight dark:text-mainDark rounded-xl mt-1 absolute w-full">
+                  <li
+                    className="hover:bg-mainDarkColor pt-3 pb-1 px-4 rounded-t-xl cursor-pointer"
+                    onClick={() => handleOptionClick("Web Development")}
+                  >
+                    Web Development
+                  </li>
+                  <li
+                    className="hover:bg-mainDarkColor py-2 px-4 cursor-pointer"
+                    onClick={() => handleOptionClick("SEO Services")}
+                  >
+                    SEO Services
+                  </li>
+                  <li
+                    className="hover:bg-mainDarkColor pb-3 pt-1 px-4 rounded-b-xl cursor-pointer"
+                    onClick={() => handleOptionClick("Graphic Design")}
+                  >
+                    Graphic Design
+                  </li>
+                </ul>
+              )}
             </div>
 
             <button
               type="submit"
-              className="w-full py-2 border mt-5 border-mainColor dark:border-mainLight  text-mainColor dark:text-mainLight font-medium rounded-md transition-colors flex justify-center items-center hover:scale-[0.98] duration-300"
+              disabled={isPending}
+              className="w-full py-2 border mt-8 border-mainColor dark:border-mainLight  text-mainColor dark:text-mainLight font-medium rounded-md transition-colors flex justify-center items-center hover:scale-[0.98] duration-300"
             >
-              LAST STEP: MY DETAILS →
+              {isPending ? "Posting..." : "Submit"}
             </button>
           </form>
         </div>
@@ -199,11 +300,18 @@ const BeMyClient = () => {
             Copyright © 2024 by octopus. All Rights Reserved
           </p>
           <ul className="flex items-center gap-3 text-xs sm:text-sm md:text-base border-b sm:border-none pb-3 sm:pb-0 fadeRight">
-            <li>{t("About")}</li>
-            <li>{t("Service")}</li>
-            <li>{t("Work")}</li>
-            <li>{t("Clients")}</li>
-            <li>{t("Contact Me")}</li>
+            {[
+              { title: "About", route: "/aboutMe" },
+              { title: "Service", route: "/process" },
+              { title: "Work", route: "/branding" },
+              { title: "Contact Me", route: "/contactUs" },
+            ]?.map((item) => (
+              <li className="hover:scale-110 duration-500">
+                <Link to={item.route}>{t(item.title)}</Link>
+              </li>
+            ))}
+
+            {/* <li>{t("Clients")}</li> */}
           </ul>
         </div>
       </div>

@@ -6,21 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import DashTitle from "../Global/DashTitle";
 
 const WhyChooseMe = () => {
-  const listOfWhyChooseMe = [
-    {
-      title: "Creativity Meets Strategy",
-      desc: "Discussion is an important thing in the development process. Thus new ideas and ingenious solutions are born. ",
-    },
-    {
-      title: "Tailored Solutions",
-      desc: "Discussion is an important thing in the development process. Thus new ideas and ingenious solutions are born. ",
-    },
-    {
-      title: "Tailored Solutions",
-      desc: "Discussion is an important thing in the development process. Thus new ideas and ingenious solutions are born. ",
-    },
-  ];
-
   const fetchWhyChooseMeData = async () => {
     try {
       const data = await apiRequest({
@@ -33,18 +18,15 @@ const WhyChooseMe = () => {
     }
   };
 
-  const { data, isFetching, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["WhyChooseMe"],
     queryFn: fetchWhyChooseMeData,
   });
-  console.log("🚀 ~ WhyChooseMe ~ data:", data);
 
   const WhyChooseMeData = data?.itemInfo?.reduce((acc, item) => {
     acc[item.key] = item.value;
     return acc;
   }, {});
-
-  console.log("🚀 ~ WhyChooseMeData ~ WhyChooseMeData:", WhyChooseMeData);
 
   return (
     <section className="bg-mainLight dark:bg-mainDark h-auto sm:h-svh sm:pt-[72px] flex  items-center">

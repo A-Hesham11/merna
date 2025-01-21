@@ -29,7 +29,7 @@ const AboutUs = () => {
     }
   };
 
-  const { data, isFetching, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["about"],
     queryFn: fetchAboutUsData,
   });
@@ -43,7 +43,6 @@ const AboutUs = () => {
     <section className="bg-mainLight dark:bg-mainDark h-svh sm:pt-[72px]">
       <div className="grid grid-cols-1 sm:grid-cols-2 pt-[72px] h-svh sm:h-auto  sm:pt-0 sm:items-center px-4 sm:px-6 md:px-10 lg:px-20 items-end">
         <div className="sm:mb-44 fadeLeft">
-
           <DashTitle title={aboutInfo?.["object-head"]} />
 
           <h2 className="text-black dark:text-white text-2xl md:text-4xl lg:text-5xl font-medium">
@@ -52,9 +51,11 @@ const AboutUs = () => {
           <p className="text-black dark:text-white my-2 sm:my-4">
             {aboutInfo?.["object-p"]}
           </p>
-          <Link to="/" className="flex items-center gap-1">
-            <p className="text-mainColor dark:text-white">{t("Know More")}</p>
-            <FiArrowUpRight className="text-mainColor dark:text-white" />
+          <Link to="/aboutMe" className="flex items-center gap-1 group">
+            <p className="text-mainColor dark:text-white group-hover:!text-mainDarkColor duration-500 ">
+              {t("Know More")}
+            </p>
+            <FiArrowUpRight className="text-mainColor dark:text-white group-hover:!text-mainDarkColor duration-500 " />
           </Link>
         </div>
 
@@ -76,13 +77,15 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="absolute w-full h-28 sm:h-auto bottom-0 sm:bottom-20 bg-[#BF4F51CC]">
-        <p className="px-4 sm:px-6 md:px-10 lg:px-20 hidden sm:block sm:text-8xl md:text-9xl lg:text-[9xl] text-white relative z-30 sm:opacity-100 opacity-0 antrilla-font fadeLeft">
-          {t("Merna Nazmy")}
-        </p>
+      <div className="absolute w-full h-28 sm:h-32 bottom-0 sm:bottom-20 bg-[#BF4F51CC] flex items-center">
+        <q className="px-4 sm:px-6 md:px-10 lg:px-20 py-4 hidden sm:block text-[20px] lg:text-[21px] text-white relative z-30 sm:opacity-100 opacity-0 w-3/5 md:w-1/2 fadeLeft">
+          {aboutInfo?.["object-h"]?.split(" ").slice(0, 23).join(" ")}
+        </q>
       </div>
     </section>
   );
 };
 
 export default AboutUs;
+
+// antrilla-font

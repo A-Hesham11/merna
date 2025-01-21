@@ -35,7 +35,6 @@ const WhatWeDo = () => {
     queryKey: ["WhatWeDo"],
     queryFn: fetchWhatWeDoData,
   });
-  console.log("🚀 ~ WhatWeDo ~ data:", data);
 
   const itemInfo = data?.itemInfo?.reduce((acc, item) => {
     acc[item.key] = item.value;
@@ -117,6 +116,7 @@ const WhatWeDo = () => {
               transition:
                 "transform 0.5s ease-in-out, grid-column 0.5s ease-in-out",
             }}
+            onClick={() => hovered && navigate("/branding")}
           >
             <img
               src={data?.itemImage?.[0]?.value || WhatWeDo_1}
@@ -124,10 +124,7 @@ const WhatWeDo = () => {
               className="w-full h-full object-cover"
             />
             {hovered ? (
-              <div
-                className="absolute bottom-20 left-1/2 -translate-x-1/2 w-4/5 flex items-center"
-                onClick={() => navigate("/branding")}
-              >
+              <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-4/5 flex items-center">
                 <div className="text-white">
                   <h2 className={`text-xl font-medium font-serif mb-2`}>
                     {itemInfo?.title}
@@ -159,6 +156,7 @@ const WhatWeDo = () => {
               transition:
                 "transform 0.5s ease-in-out, grid-column 0.5s ease-in-out",
             }}
+            onClick={() => !hovered && navigate("/SocialMedia")}
           >
             <img
               src={data?.itemImage?.[1]?.value || WhatWeDo_2}
@@ -174,10 +172,7 @@ const WhatWeDo = () => {
                 </h2>
               </div>
             ) : (
-              <div
-                className="absolute bottom-20 left-1/2 -translate-x-1/2 w-4/5 flex items-center"
-                onClick={() => navigate("/SocialMedia")}
-              >
+              <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-4/5 flex items-center ">
                 <div className="text-white">
                   <h2 className={`text-xl font-medium font-serif mb-2`}>
                     {t("Social Media Graphic Design")}

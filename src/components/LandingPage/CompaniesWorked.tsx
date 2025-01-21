@@ -30,7 +30,6 @@ const CompaniesWorked = () => {
     queryFn: fetchCompaniesWorkedData,
   });
 
-  console.log("🚀 ~ CompaniesWorked ~ data:", data);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

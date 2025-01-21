@@ -25,7 +25,6 @@ const getSlidesToSubtract = () => {
 
 const Portfolio = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  console.log("🚀 ~ Portfolio ~ currentIndex:", currentIndex);
   const [slidesToSubtract, setSlidesToSubtract] = useState(
     getSlidesToSubtract()
   );
@@ -56,10 +55,8 @@ const Portfolio = () => {
     queryKey: ["landing_portfolio"],
     queryFn: fetchWhatWeDoData,
   });
-  console.log("🚀 ~ Portfolio ~ data:", data);
 
   const [totalSlides, setTotalSlides] = useState(data?.itemImage?.length);
-  console.log("🚀 ~ Portfolio ~ totalSlides:", totalSlides);
 
   useEffect(() => {
     if (data) {

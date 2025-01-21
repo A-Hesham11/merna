@@ -2,12 +2,10 @@ import { useState } from "react";
 import "react-image-lightbox/style.css"; // Import the styles for the lightbox
 import Lightbox from "react-image-lightbox";
 
-const ImagePreview = ({ imageSrc, alt }) => {
-  console.log("🚀 ~ ImagePreview ~ imageSrc:", imageSrc);
+const ImagePreview = ({ imageSrc, alt }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = [imageSrc];
-  console.log("🚀 ~ ImagePreview ~ images:", images)
 
   const openLightbox = (index) => {
     setCurrentImageIndex(index);
